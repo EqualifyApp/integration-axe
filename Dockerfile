@@ -63,8 +63,8 @@ RUN npm install -g @axe-core/cli
 ENV APP_PORT 8083
 
 # Set up the proxy environment variables
-ENV http_proxy http://gluetun:18888
-ENV https_proxy http://gluetun:18888
+ENV http_proxy http://gluetun:8888
+ENV https_proxy http://gluetun:8888
 
 EXPOSE $APP_PORT
 
