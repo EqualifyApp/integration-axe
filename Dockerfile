@@ -66,6 +66,10 @@ ENV APP_PORT 8083
 ENV http_proxy http://gluetun:8888
 ENV https_proxy http://gluetun:8888
 
+ENV QUEUE_NAME urls_scan-axe-1
+
+
+
 EXPOSE $APP_PORT
 
 # Define environment variable
