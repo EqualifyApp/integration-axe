@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from axe_selenium_python import Axe
 from utils.watch import logger
 from flask import jsonify
-# from axe import app
+from utils.yeet_back import axe_catcher
 
 
 def axe_scan(app, body):
@@ -16,6 +16,7 @@ def axe_scan(app, body):
             else:
                 payload = json.loads(body)
             url = payload.get('url')
+            url_id = payload.get('url_id')
             logger.debug(f'🌟 Starting to process: {payload}')
 
             options = webdriver.ChromeOptions()
@@ -30,10 +31,12 @@ def axe_scan(app, body):
             axe = Axe(driver)
             axe.inject()
             results = axe.run()
+    #    logger.debug(f'Raw axe results: {results}')
 
             driver.quit()
 
-            return streamline_response(app, results)
+            streamlined_results = streamline_response(app, results)
+            axe_catcher(streamlined_results, url_id)
         except Exception as e:
             logger.error(f'❌ Error processing URL {url}: {e}', exc_info=True)
             time.sleep(5)
@@ -88,6 +91,7 @@ def streamline_response(app, results):
                     # Keep all other fields
 
             logger.debug('✅ Results have been streamlined')
+            logger.debug(f'Streamlined results: {streamlined_results}')
             return jsonify(streamlined_results)
         except Exception as e:
             logger.error(f'❌ Error streamlining results: {e}', exc_info=True)
