@@ -1,0 +1,77 @@
+{
+    "engine_name": string,
+    "engine_version": string,
+    "env_orientation_angle": number,
+    "env_orientation_type": string,
+    "env_user_agent": string,
+    "env_window_height": number,
+    "env_window_width": number,
+    "inapplicable": [
+        {
+            "description": string,
+            "help": string,
+            "helpUrl": string,
+            "id": string,
+            "impact": null,
+            "nodes": [],
+            "tags": [string]
+        }
+    ],
+    "incomplete": [
+        {
+            "description": string,
+            "help": string,
+            "helpUrl": string,
+            "id": string,
+            "impact": string,
+            "nodes": [
+                {
+                    "all": [],
+                    "any": [object],
+                    "failureSummary": string (only in violations),
+                    "html": string,
+                    "impact": string,
+                    "none": [],
+                    "target": [string]
+                }
+            ],
+            "tags": [string]
+        }
+    ],
+    "passes": [
+        {
+            "description": string,
+            "help": string,
+            "helpUrl": string,
+            "id": string,
+            "impact": null,
+            "nodes": [object],
+            "tags": [string]
+        }
+    ],
+    "reporter": string,
+    "runner_name": string,
+    "scanned_at": string,
+    "url": string,
+    "violations": [
+        {
+            "description": string,
+            "help": string,
+            "helpUrl": string,
+            "id": string,
+            "impact": string,
+            "nodes": [
+                {
+                    "all": [],
+                    "any": [object],
+                    "failureSummary": string,
+                    "html": string,
+                    "impact": string,
+                    "none": [],
+                    "target": [string]
+                }
+            ],
+            "tags": [string]
+        }
+    ]
+}

@@ -31,7 +31,8 @@ def axe_scan(app, body):
             axe = Axe(driver)
             axe.inject()
             results = axe.run()
-    #    logger.debug(f'Raw axe results: {results}')
+            logger.debug(f'Raw axe results: {results}')
+            time.sleep(15)
 
             driver.quit()
 
@@ -85,10 +86,7 @@ def streamline_response(app, results):
             # Remove unnecessary fields from passes
             if 'passes' in results:
                 for pass_item in results['passes']:
-                    del pass_item['description']
-                    del pass_item['help']
-                    del pass_item['helpUrl']
-                    # Keep all other fields
+                    trim_resulting_fat(result)
 
             logger.debug('✅ Results have been streamlined')
             logger.debug(f'Streamlined results: {streamlined_results}')
