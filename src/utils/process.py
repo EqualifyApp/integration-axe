@@ -1,25 +1,30 @@
+import time
 import json
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from axe_selenium_python import Axe
 from utils.watch import logger
 from flask import jsonify
-from flask import current_app
+# from axe import app
 
 
-def axe_scan(body):
-    with current_app.app_context():
+def axe_scan(app, body):
+    with app.app_context():
         try:
-            payload = json.loads(body)
+            if isinstance(body, str):  # Check if 'body' is a string
+                payload = json.loads(body)
+            else:
+                payload = json.loads(body)
             url = payload.get('url')
-            logger.debug('🌟 Starting to process: {payload}')
+            logger.debug(f'🌟 Starting to process: {payload}')
 
             options = webdriver.ChromeOptions()
             options.add_argument('--headless')
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
 
-            driver = webdriver.Chrome(options=options)
+            driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=options)
+            logger.debug(f'Testing URL: {url}')
             driver.get(url)
 
             axe = Axe(driver)
@@ -28,14 +33,15 @@ def axe_scan(body):
 
             driver.quit()
 
-            return streamline_response(results)
+            return streamline_response(app, results)
         except Exception as e:
             logger.error(f'❌ Error processing URL {url}: {e}', exc_info=True)
+            time.sleep(5)
             return jsonify({'error': str(e)}), 500
 
 
-def streamline_response(results):
-    with current_app.app_context():
+def streamline_response(app, results):
+    with app.app_context():
         try:
             # Define the field mapping
             field_mapping = {

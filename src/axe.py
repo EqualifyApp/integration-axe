@@ -20,18 +20,16 @@ def consume_urls():
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(
         queue=queue_name,
-        on_message_callback=lambda ch, method, properties, body: jsonify(axe_scan(body.decode('utf-8'))),
+        on_message_callback=lambda ch, method, properties, body: axe_scan(app, body.decode('utf-8')),
         auto_ack=True
     )
     logger.info(f'🐇 [*] Waiting for messages in {queue_name}. To exit press CTRL+C')
 
     channel.start_consuming()
 
-
 @app.route('/health')
 def health_check():
     return jsonify({'status': 'UP'}), 200
-
 
 @app.route('/axe')
 def handle_axe_request():
@@ -39,7 +37,7 @@ def handle_axe_request():
     logger.info(f'[HTTP request] Scanning URL: {url}')
 
     with LATENCY.time():
-        response = axe_scan(url)
+        response = axe_scan(app, url)  # Pass the 'app' instance
 
     REQUESTS.inc()
     logger.info(f'[HTTP response] {response}')
@@ -49,7 +47,6 @@ def handle_axe_request():
 # Define metrics
 REQUESTS = Counter('requests_total', 'Total number of requests')
 LATENCY = Histogram('request_latency_seconds', 'Request latency in seconds')
-
 
 @app.route('/metrics')
 def metrics():
