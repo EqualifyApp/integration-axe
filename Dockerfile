@@ -1,66 +1,61 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9-alpine
-
+FROM python:3.9-slim
 
 # Install system dependencies
-RUN apk update && \
-    apk add --no-cache \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
         wget \
         unzip \
-        libx11 \
-        libxcb \
-        libxcomposite \
-        libxcursor \
-        libxdamage \
-        libxext \
-        libxfixes \
-        libxi \
-        libxrandr \
-        libxrender \
-        libxscrnsaver \
-        libxtst \
+        libglib2.0-0 \
+        libnss3 \
+        libx11-6 \
+        libx11-xcb1 \
+        libxcb1 \
+        libxcomposite1 \
+        libxcursor1 \
+        libxdamage1 \
+        libxext6 \
+        libxfixes3 \
+        libxi6 \
+        libxrandr2 \
+        libxrender1 \
+        libxss1 \
+        libxtst6 \
         ca-certificates \
-        ttf-freefont \
-        libappindicator \
-        libasound \
-        atk \
-        at-spi2 \
-        at-spi2-core \
-        at-spi2-atk \
-        cairo \
-        cups-libs \
-        dbus \
-        gdk-pixbuf \
-        gtk+3.0 \
-        nspr \
-        nss \
-        pango \
-        xkeyboard-config \
+        fonts-liberation \
+        libappindicator3-1 \
+        libasound2 \
+        libatk-bridge2.0-0 \
+        libatk1.0-0 \
+        libatspi2.0-0 \
+        libcairo2 \
+        libcups2 \
+        libdbus-1-3 \
+        libdrm2 \
+        libgbm1 \
+        libgdk-pixbuf2.0-0 \
+        libgtk-3-0 \
+        libnspr4 \
+        libnss3 \
+        libpango-1.0-0 \
+        libpangocairo-1.0-0 \
+        libxcomposite1 \
+        libxcursor1 \
+        libxdamage1 \
+        libxfixes3 \
+        libxinerama1 \
+        libxkbcommon0 \
+        libxrandr2 \
+        libxshmfence1 \
         xdg-utils && \
-    apk add --no-cache --virtual .build-deps \
-        g++ \
-        gcc \
-        glib-dev \
-        libc-dev \
-        libx11-dev \
-        libxcomposite-dev \
-        libxcursor-dev \
-        libxdamage-dev \
-        libxext-dev \
-        libxfixes-dev \
-        libxi-dev \
-        libxrandr-dev \
-        libxrender-dev \
-        libxscrnsaver-dev \
-        libxtst-dev \
-        make \
-        musl-dev \
-        pkgconfig
+    rm -rf /var/lib/apt/lists/*
 
 # Install Chrome
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
-    apk add --no-cache --allow-untrusted google-chrome-stable_current_x86_64.rpm && \
-    rm google-chrome-stable_current_x86_64.rpm
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb && \
+    rm google-chrome-stable_current_amd64.deb && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Chromedriver
 RUN wget https://chromedriver.storage.googleapis.com/113.0.5672.24/chromedriver_linux64.zip && \
@@ -100,6 +95,3 @@ ENV FLASK_APP axe.py
 
 # Run axe.py when the container launches
 CMD ["python", "src/axe.py"]
-
-# Cleanup build dependencies
-RUN apk del .build-deps
