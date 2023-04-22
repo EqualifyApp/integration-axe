@@ -33,7 +33,7 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
             options.add_argument('--disable-dev-shm-usage')
             options.add_argument('--stdout')
 
-            driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=options)
+            driver = webdriver.Chrome(options=options)
 
             logger.debug(f'Testing URL: {url}')
             driver.get(url)
