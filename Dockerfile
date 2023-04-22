@@ -8,6 +8,7 @@ RUN apt-get update && \
         unzip \
         libglib2.0-0 \
         libnss3 \
+        gnupg \
         libx11-6 \
         libx11-xcb1 \
         libxcb1 \
@@ -50,7 +51,7 @@ RUN apt-get update && \
         xdg-utils && \
     rm -rf /var/lib/apt/lists/*
 
-
+RUN apt-get update && apt-get upgrade && apt-get autoremove && apt-get autoclean
 # Set the working directory to /app
 WORKDIR /app
 
