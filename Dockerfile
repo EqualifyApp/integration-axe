@@ -1,8 +1,10 @@
 # Use an official Python runtime as a parent image
 FROM python:3.9-alpine
 
+
 # Install system dependencies
-RUN apk update && \
+RUN apk update --repository http://dl-cdn.alpinelinux.org/alpine/edge/community && \
+    apk update && \
     apk add --no-cache \
         wget \
         unzip \
