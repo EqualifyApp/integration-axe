@@ -50,19 +50,6 @@ RUN apt-get update && \
         xdg-utils && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Chrome
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb && \
-    rm google-chrome-stable_current_amd64.deb && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install Chromedriver
-RUN wget https://chromedriver.storage.googleapis.com/113.0.5672.24/chromedriver_linux64.zip && \
-    unzip chromedriver_linux64.zip && \
-    mv chromedriver /usr/local/bin/chromedriver && \
-    chmod +x /usr/local/bin/chromedriver && \
-    rm chromedriver_linux64.zip
 
 # Set the working directory to /app
 WORKDIR /app
