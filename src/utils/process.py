@@ -1,3 +1,4 @@
+import os
 import time
 import json
 from selenium import webdriver
@@ -6,6 +7,7 @@ from axe_selenium_python import Axe
 from utils.watch import logger
 from flask import jsonify
 from utils.yeet_back import axe_catcher
+
 
 def axe_scan(app, body, channel=None, delivery_tag=None):
     with app.app_context():
@@ -18,7 +20,14 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
             url_id = payload.get('url_id')
             logger.debug(f'🌟 Starting to process: {payload}')
 
+            # Set the proxy settings using environment variables
+            http_proxy = os.environ.get('http_proxy')
+            https_proxy = os.environ.get('https_proxy')
             options = webdriver.ChromeOptions()
+            if http_proxy:
+                options.add_argument(f'--proxy-server={http_proxy}')
+            if https_proxy:
+                options.add_argument(f'--proxy-server={https_proxy}')
             options.add_argument('--headless')
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')

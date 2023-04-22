@@ -4,4 +4,4 @@ Flask==2.2.3
 prometheus-client==0.16.0
 selenium==4.9.0
 axe-selenium-python==2.1.6
-chromedriver-py=113.0.5672.24
+chromedriver-py==113.0.5672.24
