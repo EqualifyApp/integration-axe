@@ -2,10 +2,11 @@ import os
 import json
 import subprocess
 import pika
+import time
 from flask import Flask, jsonify, request, Response
-from utils.auth import rabbit
+from utils.auth import catch_rabbits
 from utils.watch import logger
-from utils.process import axe_scan, streamline_response
+from utils.process import axe_scan
 from prometheus_client import Counter, Histogram, generate_latest
 
 app = Flask(__name__)
@@ -14,22 +15,21 @@ app = Flask(__name__)
 def handle_request():
     return jsonify({'message': 'Welcome to the Axe Scanner service!'})
 
-def consume_urls():
-    queue_name = 'urls_scan-axe-1'
-    channel, connection = rabbit(queue_name)
-    channel.basic_qos(prefetch_count=1)
-    channel.basic_consume(
-        queue=queue_name,
-        on_message_callback=lambda ch, method, properties, body: axe_scan(app, body.decode('utf-8')),
-        auto_ack=True
-    )
-    logger.info(f'🐇 [*] Waiting for messages in {queue_name}. To exit press CTRL+C')
 
-    channel.start_consuming()
+def consume_urls():
+    queue_name = 'axes_for_throwing'
+    while True:
+        try:
+            catch_rabbits(queue_name, lambda ch, method, properties, body: axe_scan(app, body.decode('utf-8'), ch, method.delivery_tag))
+        except Exception as e:
+            logger.error(f'Error in consume_urls: {e}')
+            time.sleep(5)
+
 
 @app.route('/health')
 def health_check():
     return jsonify({'status': 'UP'}), 200
+
 
 @app.route('/axe')
 def handle_axe_request():
@@ -48,12 +48,14 @@ def handle_axe_request():
 REQUESTS = Counter('requests_total', 'Total number of requests')
 LATENCY = Histogram('request_latency_seconds', 'Request latency in seconds')
 
+
 @app.route('/metrics')
 def metrics():
     # Collect and return the metrics as a Prometheus-formatted response
     response = Response(generate_latest(), mimetype='text/plain')
     response.headers['Content-Type'] = 'text/plain; charset=utf-8'
     return response
+
 
 if __name__ == '__main__':
     # Get the port number from the environment variable or use 8083 as default

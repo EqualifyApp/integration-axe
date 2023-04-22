@@ -1,7 +1,7 @@
 import pika
 from utils.watch import logger
 
-def rabbit(queue_name):
+def rabbit(queue_name, message):
     logger.debug('Connecting to RabbitMQ server...')
     credentials = pika.PlainCredentials('worker_axe', '$wFBN9Iu7vS7uf&')
     connection = pika.BlockingConnection(pika.ConnectionParameters('192.168.1.29', credentials=credentials, virtual_host='gova11y'))
@@ -9,7 +9,41 @@ def rabbit(queue_name):
 
     logger.debug(f'Declaring queue: {queue_name}...')
     channel = connection.channel()
-    channel.queue_declare(queue=queue_name, durable=True, arguments={'x-message-ttl': 7200000, 'x-max-length': 250, 'x-overflow': 'reject-publish'})
+    channel.queue_declare(queue=queue_name, durable=True, arguments={'x-message-ttl': 7200000})
     logger.debug(f'Queue {queue_name} declared!')
 
-    return channel, connection
+    try:
+        channel.basic_publish(
+            exchange='',
+            routing_key=queue_name,
+            body=message,
+            properties=pika.BasicProperties(delivery_mode=2)  # Make the messages persistent
+        )
+        channel.close()
+        connection.close()
+        return channel, connection
+    except Exception as e:
+        logger.error(f"You've got a sick rabbit... {e}")
+        return None, None
+
+# Catching Rabbits
+def catch_rabbits(queue_name, callback):
+    logger.debug('Connecting to RabbitMQ server...')
+    credentials = pika.PlainCredentials('worker_axe', '$wFBN9Iu7vS7uf&')
+    connection = pika.BlockingConnection(pika.ConnectionParameters('192.168.1.29', credentials=credentials, virtual_host='gova11y'))
+    logger.debug('Connected to RabbitMQ server!')
+
+    logger.debug(f'Declaring queue: {queue_name}...')
+    channel = connection.channel()
+    channel.queue_declare(queue=queue_name, durable=True, arguments={'x-message-ttl': 7200000})
+    logger.debug(f'Queue {queue_name} declared!')
+
+    channel.basic_qos(prefetch_count=1)
+    channel.basic_consume(
+        queue=queue_name,
+        on_message_callback=callback,
+        auto_ack=False
+    )
+    logger.info(f'🐇 [*] Waiting for messages in {queue_name}. To exit press CTRL+C')
+
+    channel.start_consuming()

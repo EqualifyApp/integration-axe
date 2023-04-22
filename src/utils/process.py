@@ -7,8 +7,7 @@ from utils.watch import logger
 from flask import jsonify
 from utils.yeet_back import axe_catcher
 
-
-def axe_scan(app, body):
+def axe_scan(app, body, channel=None, delivery_tag=None):
     with app.app_context():
         try:
             if isinstance(body, str):  # Check if 'body' is a string
@@ -23,84 +22,54 @@ def axe_scan(app, body):
             options.add_argument('--headless')
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
+            options.add_argument('--stdout')
 
             driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=options)
+
             logger.debug(f'Testing URL: {url}')
             driver.get(url)
 
             axe = Axe(driver)
             axe.inject()
-            results = axe.run()
-            logger.debug(f'Raw axe results: {results}')
-            time.sleep(15)
 
+            # Debug Results
+            results = axe.run()
+
+            # Convert the results dictionary to a JSON string
+            results_json = json.dumps(results)
+
+            # Convert the JSON string back to a dictionary
+            results_dict = json.loads(results_json)
+
+            # Get Axe Driver Info
+            user_agent = driver.execute_script("return navigator.userAgent;")
+            window_width = driver.execute_script("return window.innerWidth;")
+            window_height = driver.execute_script("return window.innerHeight;")
+            orientation_angle = driver.execute_script("return window.orientation;")
+            orientation_type = driver.execute_script("return screen.orientation && screen.orientation.type;")
+
+            axe_driver_specs = {
+                'engine_name': 'Axe',
+                'orientation_angle': orientation_angle,
+                'orientation_type': orientation_type,
+                'user_agent': user_agent,
+                'window_height': window_height,
+                'window_width': window_width,
+            }
+            # logger.debug(f'Axe Driver Specs: {axe_driver_specs}')
+            # Axe Shut Down
             driver.quit()
 
-            streamlined_results = streamline_response(app, results)
-            axe_catcher(streamlined_results, url_id)
+
+            # Yeet to Yeet Back
+            axe_catcher(results_dict, url_id, axe_driver_specs)
+
+            if channel and delivery_tag:
+                channel.basic_ack(delivery_tag)
+
         except Exception as e:
             logger.error(f'❌ Error processing URL {url}: {e}', exc_info=True)
-            time.sleep(5)
-            return jsonify({'error': str(e)}), 500
-
-
-def streamline_response(app, results):
-    with app.app_context():
-        try:
-            # Define the field mapping
-            field_mapping = {
-                'timestamp': 'scanned_at',
-                'url': 'url',
-                'testEngine.name': 'engine_name',
-                'testEngine.version': 'engine_version',
-                'testRunner.name': 'runner_name',
-                'testEnvironment.userAgent': 'env_user_agent',
-                'testEnvironment.windowWidth': 'env_window_width',
-                'testEnvironment.windowHeight': 'env_window_height',
-                'testEnvironment.orientationAngle': 'env_orientation_angle',
-                'testEnvironment.orientationType': 'env_orientation_type',
-                'toolOptions.reporter': 'reporter'
-            }
-
-            # Extract the fields we want to keep and rename them using the mapping
-            streamlined_results = {}
-            for original_field, new_field in field_mapping.items():
-                if original_field in results:
-                    streamlined_results[new_field] = results[original_field]
-
-            # Remove unnecessary fields from inapplicable violations
-            if 'inapplicable' in results:
-                for result in results['inapplicable']:
-                    trim_resulting_fat(result)
-
-            # Remove unnecessary fields from incomplete violations
-            if 'incomplete' in results:
-                for result in results['incomplete']:
-                    trim_resulting_fat(result)
-
-            # Remove unnecessary fields from violations
-            if 'violations' in results:
-                for result in results['violations']:
-                    trim_resulting_fat(result)
-
-            # Remove unnecessary fields from passes
-            if 'passes' in results:
-                for pass_item in results['passes']:
-                    trim_resulting_fat(result)
-
-            logger.debug('✅ Results have been streamlined')
-            logger.debug(f'Streamlined results: {streamlined_results}')
-            return jsonify(streamlined_results)
-        except Exception as e:
-            logger.error(f'❌ Error streamlining results: {e}', exc_info=True)
-            return jsonify({'error': str(e)}), 500
-
-
-def trim_resulting_fat(result):
-    del result['description']
-    del result['help']
-    del result['helpUrl']
-    # Keep all other fields
+            return ({'error': str(e)}), 500
 
 
 # Tests
