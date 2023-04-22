@@ -3,8 +3,7 @@ FROM python:3.9-alpine
 
 
 # Install system dependencies
-RUN apk update --repository http://dl-cdn.alpinelinux.org/alpine/edge/community && \
-    apk update && \
+RUN apk update && \
     apk add --no-cache \
         wget \
         unzip \
@@ -25,6 +24,8 @@ RUN apk update --repository http://dl-cdn.alpinelinux.org/alpine/edge/community 
         libappindicator \
         libasound \
         atk \
+        at-spi2 \
+        at-spi2-core \
         at-spi2-atk \
         cairo \
         cups-libs \
