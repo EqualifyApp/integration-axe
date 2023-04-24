@@ -23,6 +23,7 @@ An overview of the various tables in the `axe` schema from `a11ydata`.
 ### Create Table
 
 
+
 ```PLpgSQL
 CREATE TABLE axe.scan_data (
     id BIGSERIAL PRIMARY KEY,
