@@ -7,10 +7,13 @@ from axe_selenium_python import Axe
 from utils.watch import logger
 from flask import jsonify
 from utils.yeet_back import axe_catcher
+from utils.auth import rabbit
 
 
 def axe_scan(app, body, channel=None, delivery_tag=None):
     with app.app_context():
+        url = None
+        url_id = None
         try:
             if isinstance(body, str):  # Check if 'body' is a string
                 payload = json.loads(body)
@@ -32,6 +35,7 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
             options.add_argument('--stdout')
+            options.add_argument('--chromedriver-path /usr/local/bin/chromedriver')
 
             driver = webdriver.Chrome(options=options)
 
@@ -78,7 +82,14 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
 
         except Exception as e:
             logger.error(f'❌ Error processing URL {url}: {e}', exc_info=True)
-            return ({'error': str(e)}), 500
+
+            # Send the URL to the axe_scan_error queue
+            if url and url_id:
+                error_message = json.dumps({'url': url, 'url_id': url_id})
+                rabbit('axe_scan_error', error_message)
+
+            if channel and delivery_tag:
+                channel.basic_nack(delivery_tag)
 
 
 # Tests

@@ -33,7 +33,8 @@ def axe_catcher(cleaned_results, url_id, axe_driver_specs):
                 'rule_type': rule_type,
                 'axe_id': rule.get('id'),
                 'impact': rule.get('impact'),
-                'tags': ','.join(rule.get('tags', []))
+                'tags': ','.join(rule.get('tags', [])),
+                'nodes': json.dumps(rule.get('nodes', []))
             }
             tables_rules_list.append(tables_rules_item)
 
