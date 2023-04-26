@@ -25,14 +25,14 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
 
             # Set the proxy settings using environment variables
             use_proxy = os.environ.get('USE_PROXY', 'false').lower() == 'true'
-            http_proxy = os.environ.get('http_proxy')
-            https_proxy = os.environ.get('https_proxy')
+            proxy_http = os.environ.get('PROXY_HTTP')
+            proxy_https = os.environ.get('PROXY_HTTPS')
             options = webdriver.ChromeOptions()
             if use_proxy:
-                if http_proxy:
-                    options.add_argument(f'--proxy-server={http_proxy}')
-                if https_proxy:
-                    options.add_argument(f'--proxy-server={https_proxy}')
+                if proxy_http:
+                    options.add_argument(f'--proxy-server={proxy_http}')
+                if proxy_https:
+                    options.add_argument(f'--proxy-server={proxy_https}')
             options.add_argument('--headless')
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
