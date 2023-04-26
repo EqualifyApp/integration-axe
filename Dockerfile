@@ -83,11 +83,13 @@ ENV RABBIT_PASSWORD PASSWORD_HERE
 ENV RABBIT_HOST 192.168.1.29
 ENV RABBIT_VHOST gova11y
 
-# Set up the proxy environment variables
-ENV http_proxy http://gluetun:8888
-ENV https_proxy http://gluetun:8888
 
-ENV QUEUE_NAME urls_scan-axe-1
+# Set up the proxy environment variables
+ENV USE_PROXY false
+ENV http_proxy http://gluetun:18888
+ENV https_proxy http://gluetun:18888
+
+ENV QUEUE_NAME axes_for_throwing
 
 EXPOSE $APP_PORT
 
