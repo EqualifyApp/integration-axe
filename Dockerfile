@@ -86,8 +86,8 @@ ENV RABBIT_VHOST gova11y
 
 # Set up the proxy environment variables
 ENV USE_PROXY false
-ENV http_proxy http://gluetun:18888
-ENV https_proxy http://gluetun:18888
+# ENV PROXY_HTTP
+# ENV PROXY_HTTPS
 
 ENV QUEUE_NAME axes_for_throwing
 
