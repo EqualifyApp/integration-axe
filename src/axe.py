@@ -8,6 +8,7 @@ from utils.auth import catch_rabbits
 from utils.watch import logger
 from utils.process import axe_scan
 from prometheus_client import Counter, Histogram, generate_latest
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 app = Flask(__name__)
 
@@ -20,7 +21,16 @@ def consume_urls():
     queue_name = 'axes_for_throwing'
     while True:
         try:
-            catch_rabbits(queue_name, lambda ch, method, properties, body: axe_scan(app, body.decode('utf-8'), ch, method.delivery_tag))
+            def callback(ch, method, properties, body):
+                with ThreadPoolExecutor(max_workers=1) as executor:
+                    try:
+                        future = executor.submit(axe_scan, app, body.decode('utf-8'), ch, method.delivery_tag)
+                        future.result(timeout=15)  # Set a timeout of 15 seconds
+                    except TimeoutError:
+                        logger.error(f'❌ Timeout reached while processing URL')
+                        ch.basic_nack(method.delivery_tag)
+
+            catch_rabbits(queue_name, callback)
         except Exception as e:
             logger.error(f'Error in consume_urls: {e}')
             time.sleep(5)
