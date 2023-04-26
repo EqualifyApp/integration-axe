@@ -24,18 +24,24 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
             logger.debug(f'🌟 Starting to process: {payload}')
 
             # Set the proxy settings using environment variables
+            use_proxy = os.environ.get('USE_PROXY', 'false').lower() == 'true'
             http_proxy = os.environ.get('http_proxy')
             https_proxy = os.environ.get('https_proxy')
             options = webdriver.ChromeOptions()
-            if http_proxy:
-                options.add_argument(f'--proxy-server={http_proxy}')
-            if https_proxy:
-                options.add_argument(f'--proxy-server={https_proxy}')
+            if use_proxy:
+                if http_proxy:
+                    options.add_argument(f'--proxy-server={http_proxy}')
+                if https_proxy:
+                    options.add_argument(f'--proxy-server={https_proxy}')
             options.add_argument('--headless')
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
             options.add_argument('--stdout')
             options.add_argument('--chromedriver-path /usr/local/bin/chromedriver')
+
+            # Disable file downloads
+            prefs = {"download_restrictions": 3}  # Disable all downloads
+            options.add_experimental_option("prefs", prefs)
 
             driver = webdriver.Chrome(options=options)
 
@@ -72,7 +78,6 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
             # logger.debug(f'Axe Driver Specs: {axe_driver_specs}')
             # Axe Shut Down
             driver.quit()
-
 
             # Yeet to Yeet Back
             axe_catcher(results_dict, url_id, axe_driver_specs)
