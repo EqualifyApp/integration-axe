@@ -6,6 +6,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         wget \
         unzip \
+        curl \
         libglib2.0-0 \
         libnss3 \
         gnupg \
