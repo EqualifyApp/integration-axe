@@ -1,0 +1,263 @@
+{
+    "engine_name": "axe-core",
+    "engine_version": "4.7.0",
+    "env_orientation_angle": 0,
+    "env_orientation_type": "landscape-primary",
+    "env_user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/112.0.5615.121 Safari/537.36",
+    "env_window_height": 600,
+    "env_window_width": 800,
+    "inapplicable": [
+        {
+            "description": "Ensures every ARIA button, link and menuitem has an accessible name",
+            "help": "ARIA commands must have an accessible name",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.7/aria-command-name?application=webdriverjs",
+            "id": "aria-command-name",
+            "impact": null,
+            "nodes": [],
+            "tags": [
+                "cat.aria",
+                "wcag2a",
+                "wcag412",
+                "ACT",
+                "TTv5",
+                "TT6.a"
+            ]
+        }
+    ],
+    "incomplete": [
+        {
+            "description": "Ensures the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+            "help": "Elements must meet minimum color contrast ratio thresholds",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.7/color-contrast?application=webdriverjs",
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+                {
+                    "all": [],
+                    "any": [
+                        {
+                            "data": {
+                                "contrastRatio": 0,
+                                "expectedContrastRatio": "3:1",
+                                "fontSize": "36.0pt (48px)",
+                                "fontWeight": "normal",
+                                "messageKey": "bgImage"
+                            },
+                            "id": "color-contrast",
+                            "impact": "serious",
+                            "message": "Element's background color could not be determined due to a background image",
+                            "relatedNodes": [
+                                {
+                                    "html": "<div class=\"a11y-paragraphs-tabs__background ds-u-visibility--hidden ds-u-md-visibility--visible\" style=\"background: url('/sites/default/files/StrategicPlan.png') bottom right/53% no-repeat;\">\n                            </div>",
+                                    "target": [
+                                        ".is-open.content[aria-hidden=\"false\"] > .a11y-paragraphs-tabs__background.ds-u-visibility--hidden.ds-u-md-visibility--visible"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background image",
+                    "html": "<h2>Strategic Plan</h2>",
+                    "impact": "serious",
+                    "none": [],
+                    "target": [
+                        ".is-open.content[aria-hidden=\"false\"] > .paragraph--type--a11y-paragraphs-tab-content.paragraph.paragraph--view-mode--default > .field--name-field-a11y-para-tabs-text-area.field--type-text-long.field__item > h2"
+                    ]
+                },
+            ],
+            "tags": [
+                "cat.color",
+                "wcag2aa",
+                "wcag143",
+                "ACT",
+                "TTv5",
+                "TT13.c"
+            ]
+        }
+    ],
+    "passes": [
+        {
+            "description": "Ensures each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "help": "Page must have means to bypass repeated blocks",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.7/bypass?application=webdriverjs",
+            "id": "bypass",
+            "impact": null,
+            "nodes": [
+                {
+                    "all": [],
+                    "any": [
+                        {
+                            "data": null,
+                            "id": "internal-link-present",
+                            "impact": "serious",
+                            "message": "Valid skip link found",
+                            "relatedNodes": []
+                        },
+                        {
+                            "data": null,
+                            "id": "header-present",
+                            "impact": "serious",
+                            "message": "Page has a heading",
+                            "relatedNodes": [
+                                {
+                                    "html": "<h1 class=\"page-title\"><span class=\"field field--name-title field--type-string field--label-hidden\">Home - Centers for Medicare &amp; Medicaid Services\n     \t<div class=\"title-border\"></div></span>\n</h1>",
+                                    "target": [
+                                        "h1"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2>Strategic Plan</h2>",
+                                    "target": [
+                                        ".is-open.content[aria-hidden=\"false\"] > .paragraph--type--a11y-paragraphs-tab-content.paragraph.paragraph--view-mode--default > .field--name-field-a11y-para-tabs-text-area.field--type-text-long.field__item > h2"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2>Coronavirus Disease 2019</h2>",
+                                    "target": [
+                                        ".field--name-field-body > h2"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2 class=\"ds-u-display--flex ds-u-align-items--center\"><i class=\"fal fa-bullhorn\"></i>Spotlight</h2>",
+                                    "target": [
+                                        ".cms-homepage--spotlight > .ds-u-align-items--center.ds-u-display--flex"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2>Top 5 resources</h2>",
+                                    "target": [
+                                        ".cms-accented-block--indicators > h2"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2 class=\"ds-u-display--flex ds-u-align-items--center\"><i class=\"fal fa-users\"></i>CMS program websites for beneficiaries</h2>",
+                                    "target": [
+                                        ".homepage-widget > .ds-u-align-items--center.ds-u-display--flex"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2>CMS news</h2>",
+                                    "target": [
+                                        "#block-cms-evo-views-block-cms-news-block-1-2 > h2"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2>Get email updates</h2>",
+                                    "target": [
+                                        ".ds-l-md-col--6.ds-l-lg-col--8.ds-l-col--12 > h2"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2 class=\"cms--link-list-title menu--expanded\" id=\"block-cms-evo-cmshhswebsitescmsglobalfooter-menu\">",
+                                    "target": [
+                                        "#block-cms-evo-cmshhswebsitescmsglobalfooter-menu"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2 class=\"cms--link-list-title menu--expanded\" id=\"block-aboutcms-menu\">",
+                                    "target": [
+                                        "#block-aboutcms-menu"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2 class=\"cms--link-list-title menu--expanded\" id=\"block-cms-evo-toolscmsglobalfooter-menu\">",
+                                    "target": [
+                                        "#block-cms-evo-toolscmsglobalfooter-menu"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2 class=\"cms--link-list-title menu--expanded\" id=\"block-cms-evo-helpfullinkscmsglobalfooter-menu\">",
+                                    "target": [
+                                        "#block-cms-evo-helpfullinkscmsglobalfooter-menu"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2 class=\"cms--link-list-title menu--expanded\" id=\"block-usagovernmentsites-menu\">",
+                                    "target": [
+                                        "#block-usagovernmentsites-menu"
+                                    ]
+                                },
+                                {
+                                    "html": "<h2 id=\"connect-message\" class=\"ds-u-visibility--screen-reader\">Connect with CMS</h2>",
+                                    "target": [
+                                        "#connect-message"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "data": null,
+                            "id": "landmark",
+                            "impact": "serious",
+                            "message": "Page has a landmark region",
+                            "relatedNodes": [
+                                {
+                                    "html": "<main id=\"skipNavTarget\" role=\"main\">",
+                                    "target": [
+                                        "#skipNavTarget"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "html": "<html lang=\"en\" dir=\"ltr\" class=\"js deque-axe-is-ready\">",
+                    "impact": null,
+                    "none": [],
+                    "target": [
+                        "html"
+                    ]
+                }
+            ],
+            "tags": [
+                "cat.keyboard",
+                "wcag2a",
+                "wcag241",
+                "section508",
+                "section508.22.o",
+                "TTv5",
+                "TT9.a"
+            ]
+        },
+    ],
+    "reporter": "v1",
+    "runner_name": "axe",
+    "scanned_at": "2023-04-20T20:54:58.513Z",
+    "url": "https://www.cms.gov/",
+    "violations": [
+        {
+            "description": "Ensures attributes that begin with aria- are valid ARIA attributes",
+            "help": "ARIA attributes must conform to valid names",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.7/aria-valid-attr?application=webdriverjs",
+            "id": "aria-valid-attr",
+            "impact": "critical",
+            "nodes": [
+                {
+                    "all": [],
+                    "any": [
+                        {
+                            "data": [
+                                "aria-labeledby"
+                            ],
+                            "id": "aria-valid-attr",
+                            "impact": "critical",
+                            "message": "Invalid ARIA attribute name: aria-labeledby",
+                            "relatedNodes": []
+                        }
+                    ],
+                    "failureSummary": "Fix any of the following:\n  Invalid ARIA attribute name: aria-labeledby",
+                    "html": "<button id=\"email-submit\" aria-labeledby=\"email-submit-label\" class=\"ds-c-button ds-c-button--solid cms--external-button\" name=\"email-footer-submit\" type=\"submit\" value=\"Sign up\">Sign up</button>",
+                    "impact": "critical",
+                    "none": [],
+                    "target": [
+                        "#email-submit"
+                    ]
+                }
+            ],
+            "tags": [
+                "cat.aria",
+                "wcag2a",
+                "wcag412"
+            ]
+        }
+    ]
+}

@@ -1,62 +1,74 @@
 import os
 import json
 import subprocess
-from flask import Flask, request, jsonify
-
-with open('src/axe.json') as f:
-    header_mapping = json.load(f)
+import pika
+import time
+from flask import Flask, jsonify, request, Response
+from utils.auth import catch_rabbits
+from utils.watch import logger
+from utils.process import axe_scan
+from prometheus_client import Counter, Histogram, generate_latest
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 app = Flask(__name__)
 
+@app.route('/')
+def handle_request():
+    return jsonify({'message': 'Welcome to the Axe Scanner service!'})
 
-def process_response(response_dict, mapping):
-    processed = {}
-    for key, value in response_dict.items():
-        if isinstance(value, dict):
-            for inner_key, inner_value in value.items():
-                combined_key = f"{key}.{inner_key}"
-                new_key = mapping.get(combined_key)
-                if new_key:
-                    processed[new_key] = inner_value
-                else:
-                    processed[combined_key] = inner_value
-        else:
-            new_key = mapping.get(key)
-            if new_key:
-                processed[new_key] = value
-            else:
-                processed[key] = value
-    return processed
+
+def consume_urls():
+    queue_name = 'axes_for_throwing'
+    while True:
+        try:
+            def callback(ch, method, properties, body):
+                with ThreadPoolExecutor(max_workers=1) as executor:
+                    try:
+                        future = executor.submit(axe_scan, app, body.decode('utf-8'), ch, method.delivery_tag)
+                        future.result(timeout=15)  # Set a timeout of 15 seconds
+                    except TimeoutError:
+                        logger.error(f'❌ Timeout reached while processing URL')
+                        ch.basic_nack(method.delivery_tag)
+
+            catch_rabbits(queue_name, callback)
+        except Exception as e:
+            logger.error(f'Error in consume_urls: {e}')
+            time.sleep(5)
+
+
+@app.route('/health')
+def health_check():
+    return jsonify({'status': 'UP'}), 200
 
 
 @app.route('/axe')
-def axe_scan():
+def handle_axe_request():
     url = request.args.get('url')
-    # Get the proxy from the environment variable
-    proxy = os.environ.get('http_proxy')
-    cmd = f'axe {url} --chromedriver-path /usr/local/bin/chromedriver --chrome-options="no-sandbox" --stdout'
-    if proxy:
-        # Prepend the proxy environment variables to the command
-        cmd = f'http_proxy={proxy} https_proxy={proxy} ' + cmd
-    output = subprocess.check_output(cmd, shell=True)
-    response = json.loads(output.decode('utf-8'))
+    logger.info(f'[HTTP request] Scanning URL: {url}')
 
-    # Check if the response is a list and get the first item
-    if isinstance(response, list) and len(response) > 0:
-        response = response[0]
-    # with open('../maps/axe.json') as f:
-    # Define header mapping
-    with open('src/axe.json') as f:
-        header_mapping = json.load(f)
+    with LATENCY.time():
+        response = axe_scan(app, url)  # Pass the 'app' instance
 
-    # Process response
-    transformed_response = process_response(response, header_mapping)
+    REQUESTS.inc()
+    logger.info(f'[HTTP response] {response}')
+    return response
 
-    # Return transformed response
-    return jsonify(transformed_response)
+# Prometheus
+# Define metrics
+REQUESTS = Counter('requests_total', 'Total number of requests')
+LATENCY = Histogram('request_latency_seconds', 'Request latency in seconds')
+
+
+@app.route('/metrics')
+def metrics():
+    # Collect and return the metrics as a Prometheus-formatted response
+    response = Response(generate_latest(), mimetype='text/plain')
+    response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    return response
 
 
 if __name__ == '__main__':
     # Get the port number from the environment variable or use 8083 as default
     app_port = int(os.environ.get('APP_PORT', 8083))
+    consume_urls()
     app.run(debug=True, host='0.0.0.0', port=app_port)
