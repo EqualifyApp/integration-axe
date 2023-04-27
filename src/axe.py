@@ -3,6 +3,7 @@ import json
 import subprocess
 import pika
 import time
+import threading
 from flask import Flask, jsonify, request, Response
 from utils.auth import catch_rabbits
 from utils.watch import logger
@@ -70,5 +71,10 @@ def metrics():
 if __name__ == '__main__':
     # Get the port number from the environment variable or use 8083 as default
     app_port = int(os.environ.get('APP_PORT', 8083))
-    consume_urls()
+
+    # Start consume_urls in a separate thread
+    consume_thread = threading.Thread(target=consume_urls, daemon=True)
+    consume_thread.start()
+
+    # Run the Flask app
     app.run(debug=True, host='0.0.0.0', port=app_port)
