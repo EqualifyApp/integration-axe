@@ -11,6 +11,22 @@ from utils.auth import rabbit
 
 
 def axe_scan(app, body, channel=None, delivery_tag=None):
+    """
+    Description:
+        This function performs an accessibility audit using Axe-Core for a given URL.
+
+    Args:
+        app: The Flask application context.
+        body: The HTTP POST request body containing the URL to be audited.
+        channel: The RabbitMQ channel for the message. Default is None.
+        delivery_tag: The RabbitMQ message delivery tag. Default is None.
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If an error occurs during the accessibility audit.
+    """
     with app.app_context():
         url = None
         url_id = None
@@ -95,13 +111,3 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
 
             if channel and delivery_tag:
                 channel.basic_nack(delivery_tag)
-
-
-# Tests
-def test_axe_scan():
-    body = json.dumps({'url': 'https://example.com'})
-    response = axe_scan(body)
-    assert response.status_code == 200
-    data = response.json
-    assert 'url' in data
-    assert 'results' in data

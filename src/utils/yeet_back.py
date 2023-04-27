@@ -6,9 +6,19 @@ from utils.auth import rabbit
 
 
 def axe_catcher(cleaned_results, url_id, axe_driver_specs):
-    # logger.debug(f'Yeet Caught {url_id} ! \n Axe Driver Specs: {axe_driver_specs}')
-    # logger.debug(f'Caught Cleaned Results: {cleaned_results}')
+    """
+    Description:
+        This function processes the cleaned_results and creates tables_rules and tables_nodes lists. It also prepares
+        data for RabbitMQ and sends data to the sharp_axes queue.
 
+    Args:
+        cleaned_results: A dictionary containing the cleaned results.
+        url_id: An integer representing the URL ID.
+        axe_driver_specs: A dictionary containing the Axe driver specs.
+
+    Returns:
+        None
+    """
     tables_scans = {
             'engine_name': axe_driver_specs.get('engine_name'),
             'orientation_angle': axe_driver_specs.get('orientation_angle'),
@@ -60,8 +70,6 @@ def axe_catcher(cleaned_results, url_id, axe_driver_specs):
     message = json.dumps(data)
 
     # Send the data to the RabbitMQ queue
-
-# This queue is for the table data
     queue_name = 'sharp_axes'
     channel, connection = rabbit(queue_name, message)
     if channel and connection:
@@ -70,7 +78,6 @@ def axe_catcher(cleaned_results, url_id, axe_driver_specs):
         logger.error(f'Sick Rabbit! Sick Rabbit! Sick Rabbit! {queue_name}')
 
     # Send a confirmation message to the axe_speed queue
-    # This queue is to track speed
     queue_name = 'axe_speed'
     body='VICTORY'
     channel, connection = rabbit(queue_name, body)

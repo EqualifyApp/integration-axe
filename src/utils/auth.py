@@ -1,7 +1,19 @@
 import pika
 from utils.watch import logger
 
+
 def rabbit(queue_name, message):
+    """
+    This function connects to a RabbitMQ server and sends a message to the specified queue.
+
+    Args:
+        queue_name (str): The name of the queue to send the message to.
+        message (str): The message to be sent.
+
+    Returns:
+        channel (pika.channel.Channel): The channel used to send the message.
+        connection (pika.connection.Connection): The connection to the RabbitMQ server.
+    """
     logger.debug('Connecting to RabbitMQ server...')
     credentials = pika.PlainCredentials('worker_axe', 'pass_the_worker_axe')
     connection = pika.BlockingConnection(pika.ConnectionParameters('192.168.1.29', credentials=credentials, virtual_host='gova11y'))
@@ -26,8 +38,18 @@ def rabbit(queue_name, message):
         logger.error(f"You've got a sick rabbit... {e}")
         return None, None
 
-# Catching Rabbits
+
 def catch_rabbits(queue_name, callback):
+    """
+    This function connects to a RabbitMQ server and waits for messages in the specified queue.
+
+    Args:
+        queue_name (str): The name of the queue to listen to.
+        callback (function): The function to call when a message is received.
+
+    Raises:
+        pika.exceptions.AMQPConnectionError: If there is an error connecting to the RabbitMQ server.
+    """
     logger.debug('Connecting to RabbitMQ server...')
     credentials = pika.PlainCredentials('worker_axe', 'pass_the_worker_axe')
     connection = pika.BlockingConnection(pika.ConnectionParameters('192.168.1.29', credentials=credentials, virtual_host='gova11y'))
@@ -47,3 +69,4 @@ def catch_rabbits(queue_name, callback):
     logger.info(f'🐇 [*] Waiting for messages in {queue_name}. To exit press CTRL+C')
 
     channel.start_consuming()
+

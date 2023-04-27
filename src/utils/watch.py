@@ -25,7 +25,15 @@ if not logger.hasHandlers():
     # Add the console handler to the logger
     logger.addHandler(ch)
 
+
 def configure_logger():
+    """
+    Description:
+        This function configures the logger for the Flask application.
+
+    Returns:
+        None
+    """
     # Use the logger from logging_config.py
     global logger
     logger = logging.getLogger("A11y🪵 ")
