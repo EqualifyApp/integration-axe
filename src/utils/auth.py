@@ -3,7 +3,7 @@ from utils.watch import logger
 
 def rabbit(queue_name, message):
     logger.debug('Connecting to RabbitMQ server...')
-    credentials = pika.PlainCredentials('worker_axe', '$wFBN9Iu7vS7uf&')
+    credentials = pika.PlainCredentials('worker_axe', 'pass_the_worker_axe')
     connection = pika.BlockingConnection(pika.ConnectionParameters('192.168.1.29', credentials=credentials, virtual_host='gova11y'))
     logger.debug('Connected to RabbitMQ server!')
 
@@ -29,7 +29,7 @@ def rabbit(queue_name, message):
 # Catching Rabbits
 def catch_rabbits(queue_name, callback):
     logger.debug('Connecting to RabbitMQ server...')
-    credentials = pika.PlainCredentials('worker_axe', '$wFBN9Iu7vS7uf&')
+    credentials = pika.PlainCredentials('worker_axe', 'pass_the_worker_axe')
     connection = pika.BlockingConnection(pika.ConnectionParameters('192.168.1.29', credentials=credentials, virtual_host='gova11y'))
     logger.debug('Connected to RabbitMQ server!')
 

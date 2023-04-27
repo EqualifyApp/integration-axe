@@ -52,6 +52,11 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get upgrade && apt-get autoremove && apt-get autoclean
+
+# Define a health check
+HEALTHCHECK --interval=2m --timeout=5s \
+    CMD curl -f http://localhost:$APP_PORT/health || exit 1
+
 # Set the working directory to /app
 WORKDIR /app
 
@@ -79,15 +84,13 @@ COPY src /app/src
 
 ENV APP_PORT 8083
 ENV RABBIT_USERNAME worker_axe
-ENV RABBIT_PASSWORD PASSWORD_HERE
+ENV RABBIT_PASSWORD pass_the_worker_axe
 ENV RABBIT_HOST 192.168.1.29
 ENV RABBIT_VHOST gova11y
 
 
 # Set up the proxy environment variables
 ENV USE_PROXY false
-# ENV PROXY_HTTP
-# ENV PROXY_HTTPS
 
 ENV QUEUE_NAME axes_for_throwing
 
