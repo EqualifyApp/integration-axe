@@ -1,6 +1,4 @@
 import json
-import time
-import pika
 from utils.watch import logger
 from utils.auth import rabbit
 

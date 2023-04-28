@@ -4,6 +4,7 @@ import subprocess
 import pika
 import time
 import threading
+from functools import wraps
 from flask import Flask, jsonify, request, Response
 from utils.auth import catch_rabbits
 from utils.watch import logger
@@ -98,6 +99,17 @@ def handle_axe_request():
 REQUESTS = Counter('requests_total', 'Total number of requests')
 LATENCY = Histogram('request_latency_seconds', 'Request latency in seconds')
 
+def measure_latency(endpoint):
+    def decorator(func):
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            start_time = time()
+            response = func(*args, **kwargs)
+            LATENCY.labels(endpoint=endpoint).observe(time() - start_time)
+            REQUESTS.labels(endpoint=endpoint).inc()
+            return response
+        return wrapped
+    return decorator
 
 @app.route('/metrics')
 def metrics():
