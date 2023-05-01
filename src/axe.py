@@ -35,7 +35,7 @@ def consume_urls():
     Raises:
         Any exceptions raised by the axe_scan function.
     """
-    queue_name = 'axes_for_throwing'
+    queue_name = 'launch_axe'
     while True:
         try:
             def callback(ch, method, properties, body):

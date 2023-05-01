@@ -68,7 +68,7 @@ def axe_catcher(cleaned_results, url_id, axe_driver_specs):
     message = json.dumps(data)
 
     # Send the data to the RabbitMQ queue
-    queue_name = 'sharp_axes'
+    queue_name = 'landing_axe'
     channel, connection = rabbit(queue_name, message)
     if channel and connection:
         logger.info(f'🏆 Message sent to {queue_name}!')
