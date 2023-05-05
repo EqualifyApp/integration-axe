@@ -81,7 +81,7 @@ COPY src /app/src
 ENV APP_PORT 8083
 ENV RABBIT_USERNAME worker_axe
 ENV RABBIT_PASSWORD pass_the_worker_axe
-ENV RABBIT_HOST 192.168.1.29
+ENV RABBIT_HOST rabbit
 ENV RABBIT_VHOST gova11y
 
 # Define a health check
@@ -91,7 +91,7 @@ HEALTHCHECK --interval=2m --timeout=5s \
 # Set up the proxy environment variables
 ENV USE_PROXY false
 
-ENV QUEUE_NAME axes_for_throwing
+# ENV QUEUE_NAME axes_for_throwing
 
 EXPOSE $APP_PORT
 
