@@ -106,8 +106,22 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
 
             # Send the URL to the axe_scan_error queue
             if url and url_id:
-                error_message = json.dumps({'url': url, 'url_id': url_id})
-                rabbit('error_axe', error_message)
+                # Send a message to the error_crawler queue
+                error_payload = json.dumps({
+                    "url_id": url_id,
+                    "url": url,
+                    "error_message": {e}
+                })
+                rabbit('error_axe', error_payload)
 
             if channel and delivery_tag:
                 channel.basic_nack(delivery_tag)
+
+
+                # Send a message to the error_crawler queue
+                error_payload = json.dumps({
+                    "url_id": url_id,
+                    "url": url,
+                    "error_message": error_message
+                })
+                send_to_queue("error_crawler", error_payload)
