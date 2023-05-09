@@ -116,12 +116,3 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
 
             if channel and delivery_tag:
                 channel.basic_nack(delivery_tag)
-
-
-                # Send a message to the error_crawler queue
-                error_payload = json.dumps({
-                    "url_id": url_id,
-                    "url": url,
-                    "error_message": error_message
-                })
-                send_to_queue("error_crawler", error_payload)
