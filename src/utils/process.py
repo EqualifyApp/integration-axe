@@ -50,12 +50,13 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
                 if proxy_https:
                     options.add_argument(f'--proxy-server={proxy_https}')
             options.add_argument('--headless')
+            options.add_argument('--single-process')
+            options.add_argument('--disable-gpu')
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
             options.add_argument('--stdout')
             options.add_argument('--remote-debugging-port=9222')
-            options.add_argument('--disable-gpu')
-            options.binary_location = '/usr/local/bin/chromedriver'
+            options.binary_location = '/opt/google/chrome/chrome'
 
             # Disable file downloads
             prefs = {"download_restrictions": 3}  # Disable all downloads
