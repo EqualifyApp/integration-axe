@@ -8,6 +8,7 @@ from utils.watch import logger
 from flask import jsonify
 from utils.yeet_back import axe_catcher
 from utils.auth import rabbit
+from selenium.common.exceptions import JavascriptException
 
 
 def axe_scan(app, body, channel=None, delivery_tag=None):
@@ -68,7 +69,14 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
             driver.get(url)
 
             axe = Axe(driver)
-            axe.inject()
+            try:
+                axe.inject()
+            except JavascriptException as e:
+                logger.error(f"Error injecting axe on {url}: {str(e)}")
+                # Handle the exception or perform the desired actions
+            else:
+                results = axe.run()
+                # Process the results as you wish
 
             # Debug Results
             results = axe.run()
