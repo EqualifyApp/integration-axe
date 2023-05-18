@@ -53,6 +53,8 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
             options.add_argument('--stdout')
+            options.add_argument('--remote-debugging-port=9222')
+            options.add_argument('--disable-gpu')
             options.binary_location = '/usr/local/bin/chromedriver'
 
             # Disable file downloads
