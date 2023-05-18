@@ -39,7 +39,7 @@ def consume_urls():
     while True:
         try:
             def callback(ch, method, properties, body):
-                with ThreadPoolExecutor(max_workers=1) as executor:
+                with ThreadPoolExecutor(max_workers=2) as executor:
                     try:
                         future = executor.submit(axe_scan, app, body.decode('utf-8'), ch, method.delivery_tag)
                         future.result(timeout=15)  # Set a timeout of 15 seconds
@@ -110,6 +110,7 @@ def measure_latency(endpoint):
             return response
         return wrapped
     return decorator
+
 
 @app.route('/metrics')
 def metrics():
