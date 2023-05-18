@@ -53,7 +53,7 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
             options.add_argument('--stdout')
-            options.add_argument('--chromedriver-path /usr/local/bin/chromedriver')
+            options.binary_location = '/usr/local/bin/chromedriver'
 
             # Disable file downloads
             prefs = {"download_restrictions": 3}  # Disable all downloads
@@ -110,7 +110,7 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
                 error_payload = json.dumps({
                     "url_id": url_id,
                     "url": url,
-                    "error_message": {e}
+                    "error_message": str(e)
                 })
                 rabbit('error_axe', error_payload)
 
