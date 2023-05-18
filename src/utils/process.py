@@ -43,13 +43,13 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
             # Set the proxy settings using environment variables
             use_proxy = os.environ.get('USE_PROXY', 'false').lower() == 'true'
             proxy_http = os.environ.get('PROXY_HTTP')
-            proxy_https = os.environ.get('PROXY_HTTPS')
+            # proxy_https = os.environ.get('PROXY_HTTPS')
             options = webdriver.ChromeOptions()
             if use_proxy:
                 if proxy_http:
-                    options.add_argument(f'--proxy-server={proxy_http}')
-                if proxy_https:
-                    options.add_argument(f'--proxy-server={proxy_https}')
+                    options.add_argument(f'--proxy-server=http://{proxy_http}')
+                # if proxy_https:
+                    # options.add_argument(f'--proxy-server={proxy_https}')
             options.add_argument('--headless')
             options.add_argument('--single-process')
             options.add_argument('--disable-gpu')
@@ -76,7 +76,6 @@ def axe_scan(app, body, channel=None, delivery_tag=None):
                 # Handle the exception or perform the desired actions
             else:
                 results = axe.run()
-                # Process the results as you wish
 
             # Debug Results
             results = axe.run()
